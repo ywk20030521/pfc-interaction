@@ -1,0 +1,2 @@
+python import itasca_mcp_bridge
+python itasca_mcp_bridge.start(mode="console", auto_upgrade=False)
