@@ -76,9 +76,15 @@ Skill 在需要时维护这些标识之间的关联，避免回答串线到错�
 
 ## 5. 能力探测流程
 
-1. 检查宿主是否提供结构化提问工具（当前宿主已实测可用）；
+宿主能力不得从其他宿主外推；每次会话按 `core/host_interaction.py` 重新探测：
+
+1. 检查宿主是否注入结构化提问回调（`structured_ask`）；
 2. 检查 AUQ 是否安装并在 MCP 配置中注册；
-3. 按可用性决定路由能力：
-   - 两者可用：按路由规则选择；
-   - 仅 Chat：全部走 Chat，声明 AUQ 异步能力不可用；
-   - 均无：退化为普通对话文字提问，决策协议不变。
+3. 检查宿主卡片 UI 是否真正订阅 `PreparedCard`；
+4. 记录 L0（仅 Native Chat）/ L1（结构化提问）/ L2（AUQ + 卡片 UI）及证据；
+5. 没有结构化提问回调时，`ask()` 返回 `PENDING_NATIVE_CHAT` 且 `delivered=False`；
+   Agent 必须在 Native Chat 提问并结束本轮等待，不得声称"已投递/已询问"；
+6. 同一事项与 `context_version` 只投递一次；上下文变化后可以重新提问。
+
+`pr0/HOST_INTERACTION_CAPABILITY.md` 中"当前宿主已实测可用"仅适用于记录该结论的
+宿主，不能外推到 Codex 或其他会话。

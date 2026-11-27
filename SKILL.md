@@ -105,6 +105,9 @@ figures.
 - 同一事项以 `research_task_id + stage_id + decision_topic` 为稳定键；Chat 已答不得重复投递 AUQ；同一事项只能有一个有效交互实例。
 - 结构化卡片只在问题明确且能降低用户负担时使用；复杂科学判断不得压缩成失真的单选题。5.1 五类卡片（讨论收敛/参数登记/方案确认/执行授权/检查点决策）以 `docs/PFCI-CARD-5.0.1.md` 为唯一详细依据；`assets/v510_cards.html` 是宿主渲染参考。
 - 卡片回答只回写交互与决策上下文；Agent 必须解释回答影响。执行确认卡必须列出动作、对象、版本和影响，无默认勾选、无静默延后，且不绕过 Core 直接触发工具。
+- **宿主投递不是假定能力**：每次会话先通过 `core/host_interaction.py::probe_host_capability()` 记录 L0/L1/L2。没有宿主结构化提问回调时，卡片只是数据；`ask()` 返回 `PENDING_NATIVE_CHAT` 且 `delivered=False`，Agent 必须在 Native Chat 提出文字问题并结束本轮等待。禁止写成"已投递/已询问"。
+- **强制停机协议**：正式仿真缺少实验目的、边界类型、试样尺寸、目标围压、加载终点或参数来源时，`core/stop_protocol.py::require_user_decision()` 返回 `status: WAITING_FOR_USER`、`pending_decision_id`、`allowed_next_action: none`。该轮不得调用 `model new`、`itasca_execute_task` 或创建正式 Run；用户回答只更新上下文，必须再次确认并取得授权。
+- **执行闸门**：正式 Run 必须把 `FormalRunAuthorization.to_headless_args()` 的授权字段传给 `pfc-headless run prepare`；无授权只能显式 `--pilot` 并标记为 `UNACCEPTED_TECHNICAL_PILOT`。不得直接调用 `itasca_execute_task` 绕过授权网关。
 
 ## 参数标定（S4 跨模块闭环）
 
@@ -120,6 +123,9 @@ M2 定义标定试验、目标指标和工况矩阵；Core 与用户确认目标
 | 5.1 议题树、D0–D3 深度讨论、证据/假设、变更档案、五类卡片 | 已实现 | `core/v501_*.py`、`modules/v501_cards.py`；14 条协议测试 + 复杂案例回放 |
 | 5.1 跨会话恢复、模式自动路由、M1–M6 深度包装 | 已实现 | `core/v510_continuity.py`、`v510_routing.py`、`modules/v510_deep_modules.py`；9 条发布测试 |
 | 宿主 UI 渲染 | 参考实现完成 | `assets/v510_cards.html`：五类卡片、折叠依据、窄屏、文字状态；宿主实际渲染仍由平台决定 |
+| 宿主结构化提问通道 | 需运行时探测，未假定可用 | `core/host_interaction.py` L0/L1/L2 探测；无回调时返回 `PENDING_NATIVE_CHAT`，不得声称已投递 |
+| 提问后强制停机 / 正式 Run 授权闸门 | 已实现并通过离线验收 | `core/stop_protocol.py`；`tests/test_interaction_runtime_gate.py` 8 条覆盖诊断报告 7 项条件；需与 `pfc-headless` 授权闸门配套使用 |
+| 端到端宿主交互（卡片自动显示并回写） | 未通过 | 宿主 UI 渲染仍为参考实现；Native Chat 必须由 Agent 主动停机等待 |
 | 六阶段编排、回退与影响分析 | 已实现 | `core/v50_workflow.py` |
 | 参数标定闭环、卡片交互适配 | 已实现 | `modules/v50_calibration.py`、`modules/v50_interaction.py` |
 | 协议层端到端离线演练 | 通过 | `examples/v50/full_stage_walkthrough.py` |
