@@ -1,0 +1,29 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: 讨论、决策与授权
+      labels:
+        - discussion
+        - decision
+        - authorization
+    - title: 宿主交互与卡片
+      labels:
+        - host
+        - cards
+    - title: 工作流与模块编排
+      labels:
+        - workflow
+        - orchestration
+    - title: 安全与闸门
+      labels:
+        - security
+        - gate
+    - title: 文档与仓库配置
+      labels:
+        - documentation
+        - repository-config
+    - title: 其他变更
+      labels:
+        - "*"

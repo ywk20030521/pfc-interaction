@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 发布与兼容说明
+    url: https://github.com/ywk20030521/pfc-interaction/blob/main/RELEASE.md
+    about: 先查看版本矩阵、已知限制与宿主能力说明。
+  - name: 安全漏洞
+    url: https://github.com/ywk20030521/pfc-interaction/security/advisories/new
+    about: 可利用缺陷请私下报告。

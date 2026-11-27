@@ -1,0 +1,45 @@
+name: 功能建议
+description: 提出协作、讨论或编排能力改进
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交前请确认职责边界：执行归 Execution，图表/派生量归 Visualization，
+        正式验证与 Evidence/Finding 归规划中的 RE Skill。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 要解决的问题
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议方案
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 备选方案与影响
+    validations:
+      required: false
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: 是否越过本 Skill 边界
+      options:
+        - "否，属于交互/决策/编排"
+        - "是，需要其他 Skill 配合"
+        - "不确定"
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: 如何验证
+      description: 列出测试与所需真实宿主/PFC 证据；无证据请标 NOT_VERIFIED。
+    validations:
+      required: true
