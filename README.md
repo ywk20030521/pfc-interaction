@@ -1,8 +1,10 @@
-# PFC Interaction Skill 5.1.0
+# PFC Interaction Skill 5.2.0
 
 面向 Itasca PFC2D/PFC3D 数值模拟的持续科研协作 Skill。一个 Skill、一个协作主体：Agent 主持科研讨论，用户保留科学决策权，专业模块 M1–M6 按需调用，底层复用 itasca-mcp / Bridge 与 Scientific Visualization Skill。
 
 5.1 将 Skill 从「会按流程协作」升级为「可持续深度科研协作系统」：以科研议题为核心，支持 D0–D3 实质讨论、证据/假设/决策成熟度、跨会话恢复、讨论模式自动路由、M1–M6 深度包装、五类结构化卡片和可复用科学层闸门。用户可见的是 S1–S6 六阶段，而不是六个独立模块。
+
+5.2 新增 **S4 参数识别与标定核心子系统**（`core/s4_*.py`、`modules/s4_calibration.py`）：作为独立核心子系统服务于 S4 阶段，保留六阶段与六模块，不新增第七模块、不并入 M4。包含五层宏观—细观关系分析、可辨识性与耦合分析、逐参数七步协商、12 条高效标定规则与 E0–E5 经验库、下一步最优试算决策，以及 C1–C8 编排与独立验证冻结。三条原则不可降级：科学关系先于调参、每个参数独立论证但不孤立确定（B 方案）、科研判断决定参数冻结。详见 `docs/S4_SPEC.md` 与 `docs/V520_ACCEPTANCE.md`。
 
 ## Responsibility boundary
 

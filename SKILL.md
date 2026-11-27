@@ -4,11 +4,11 @@ description: Continuous deep research collaboration for PFC2D/PFC3D studies. Own
 metadata:
   short-description: Deep research discussion and decision authority for PFC studies
 license: MIT
-version: 5.1.0
+version: 5.2.0
 agent_created: true
 ---
 
-# PFC Interaction Skill 5.1
+# PFC Interaction Skill 5.2
 
 ## 定位
 
