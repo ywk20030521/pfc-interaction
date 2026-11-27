@@ -26,6 +26,9 @@ def evaluate_triaxial_case(conf_measured: float, conf_target: float,
         abs(c / conf_target - 1.0) <= 0.10 for c in during)
     data_valid = abs(ratio - 1.0) <= tolerance and drift_ok
     peak_claim_allowed = samples_after_peak >= 2
+    # Boundary: this function reports a *technical* data signal only.  It does
+    # not authorise a scientific claim; formal claim authority belongs to the
+    # planned pfc-research-evidence Skill with explicit criteria and evidence.
     return {
         "confinement_ratio": round(ratio, 4),
         "confinement_during_loading_ok": drift_ok,
@@ -33,8 +36,12 @@ def evaluate_triaxial_case(conf_measured: float, conf_target: float,
         "peak_strength_claim_allowed": peak_claim_allowed,
         "status": (
             "PASS_FOR_MECHANISM_COMPARISON" if data_valid else "BLOCKED_CONFINEMENT"),
+        "claim_authority": "TECHNICAL_SIGNAL_ONLY",
+        "scientific_validation": "NOT_PERFORMED",
+        "requires": "pfc-research-evidence validation before any claim",
         "note": (
-            "可比较曲线形态与键断裂；峰值强度结论仅在 peak_strength_claim_allowed=true 时允许"),
+            "仅表示围压控制与采样充分性满足机制比较的技术前提；"
+            "不授权峰值强度或物理机制结论，正式结论须由 RE 以判据和证据裁定"),
     }
 
 

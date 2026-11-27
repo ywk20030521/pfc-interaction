@@ -155,6 +155,17 @@ class RuntimeGateTests(unittest.TestCase):
         self.assertEqual(changed.status, "ANSWERED")
         self.assertEqual(len(task.interactions), 2)
 
+    def test_physics_gate_is_technical_signal_not_scientific_authority(self):
+        from core.v510_physics import evaluate_triaxial_case
+
+        result = evaluate_triaxial_case(1.0004, 1.0, [1.01, 0.99], ["pfc-1"],
+                                        samples_after_peak=3)
+        self.assertTrue(result["data_valid_for_mechanism_comparison"])
+        self.assertTrue(result["peak_strength_claim_allowed"])
+        self.assertEqual(result["claim_authority"], "TECHNICAL_SIGNAL_ONLY")
+        self.assertEqual(result["scientific_validation"], "NOT_PERFORMED")
+        self.assertIn("pfc-research-evidence", result["requires"])
+
     def test_native_chat_minimum_turn_is_required(self):
         good = {
             "understanding": "三轴压缩，参数未定",
