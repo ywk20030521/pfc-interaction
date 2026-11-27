@@ -99,6 +99,13 @@ bridge 在线时 **170 条全部通过（0 跳过）**：98 条既有 4.0/4.1 �
 
 状态用语分层：`已实现` / `接口层通过` / `协议层通过` / `工具层在线通过` / `科学层机制比较通过` / `定量标定不在范围`。
 
-## 许可
+## 许可与社区
 
 MIT — 详见 [LICENSE](LICENSE)。
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — 贡献流程与科研诚信规则
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — 行为准则
+- [SECURITY.md](SECURITY.md) — 漏洞私下报告渠道
+- [docs/VERSIONING.md](docs/VERSIONING.md) — 版本与发布流程
+- [docs/RELEASE_NOTES_DRAFT.md](docs/RELEASE_NOTES_DRAFT.md) — 拟议 tag 的草稿，未发布
+- [docs/OPEN_SOURCE_READINESS.md](docs/OPEN_SOURCE_READINESS.md) — 与三大 Skill 标准对接

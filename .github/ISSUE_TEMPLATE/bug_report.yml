@@ -1,0 +1,53 @@
+name: 缺陷报告
+description: 报告讨论、决策、授权或编排中的可复现问题
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        安全漏洞请勿在此公开，按 `SECURITY.md` 私下报告。不要上传含专有参数的文件。
+  - type: textarea
+    id: summary
+    attributes:
+      label: 现象
+      description: 描述观察到的行为与精确命令。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 环境
+      placeholder: "Python 3.13 / Windows 11 / 宿主 WorkBuddy / bridge 0.6.17 / commit <sha>"
+    validations:
+      required: true
+  - type: dropdown
+    id: channel
+    attributes:
+      label: 交互通道
+      options:
+        - Native Chat
+        - 宿主结构化提问
+        - AUQ / 卡片 UI
+        - 未探测 / 未知
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 证据
+      description: 决策 ID、授权 ID、议题 ID 或测试输出；隐去敏感路径。
+    validations:
+      required: false
