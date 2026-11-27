@@ -1,0 +1,313 @@
+{
+  "benchmark": "pfc-interaction-runtime-gate",
+  "timestamp_utc": "2026-11-27T12:34:30Z",
+  "environment": {
+    "python": "3.13.14",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "psutil": "7.2.2",
+    "real_pfc_execution": false,
+    "real_host_ui": false
+  },
+  "scenarios": [
+    {
+      "name": "probe_host_capability_l0",
+      "iterations_per_round": 500,
+      "rounds": 5,
+      "total_calls": 2500,
+      "latency_ms": {
+        "mean": 0.001094,
+        "median": 0.0011,
+        "p95": 0.0012,
+        "p99": 0.0017,
+        "min": 0.001,
+        "max": 0.0071,
+        "stdev": 0.000197
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 3.125,
+        "wall_ms_per_round_mean": 2.033,
+        "rss_start_bytes": 37531648,
+        "rss_end_bytes": 37539840,
+        "rss_growth_bytes": 8192,
+        "tracemalloc_peak_bytes": 728,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 8192
+      }
+    },
+    {
+      "name": "probe_host_capability_l2",
+      "iterations_per_round": 500,
+      "rounds": 5,
+      "total_calls": 2500,
+      "latency_ms": {
+        "mean": 0.001361,
+        "median": 0.0011,
+        "p95": 0.0023,
+        "p99": 0.003401,
+        "min": 0.001,
+        "max": 0.0628,
+        "stdev": 0.001915
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 3.125,
+        "wall_ms_per_round_mean": 2.329,
+        "rss_start_bytes": 37605376,
+        "rss_end_bytes": 37605376,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 728,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    },
+    {
+      "name": "missing_parameters_stop",
+      "iterations_per_round": 300,
+      "rounds": 5,
+      "total_calls": 1500,
+      "latency_ms": {
+        "mean": 0.017968,
+        "median": 0.0168,
+        "p95": 0.026005,
+        "p99": 0.03342,
+        "min": 0.016,
+        "max": 0.1377,
+        "stdev": 0.005118
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 6.25,
+        "wall_ms_per_round_mean": 7.277,
+        "rss_start_bytes": 37699584,
+        "rss_end_bytes": 37703680,
+        "rss_growth_bytes": 4096,
+        "tracemalloc_peak_bytes": 5040,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 4096
+      }
+    },
+    {
+      "name": "ask_native_chat_pending",
+      "iterations_per_round": 300,
+      "rounds": 5,
+      "total_calls": 1500,
+      "latency_ms": {
+        "mean": 0.024284,
+        "median": 0.0235,
+        "p95": 0.025505,
+        "p99": 0.044711,
+        "min": 0.0222,
+        "max": 0.1048,
+        "stdev": 0.00496
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 9.375,
+        "wall_ms_per_round_mean": 8.335,
+        "rss_start_bytes": 37724160,
+        "rss_end_bytes": 37724160,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 5826,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    },
+    {
+      "name": "ask_structured_delivered",
+      "iterations_per_round": 300,
+      "rounds": 5,
+      "total_calls": 1500,
+      "latency_ms": {
+        "mean": 0.033189,
+        "median": 0.02775,
+        "p95": 0.047805,
+        "p99": 0.058917,
+        "min": 0.024,
+        "max": 0.2528,
+        "stdev": 0.010846
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 12.5,
+        "wall_ms_per_round_mean": 11.332,
+        "rss_start_bytes": 37728256,
+        "rss_end_bytes": 37728256,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 6202,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    },
+    {
+      "name": "duplicate_suppression",
+      "iterations_per_round": 200,
+      "rounds": 5,
+      "total_calls": 1000,
+      "latency_ms": {
+        "mean": 0.027094,
+        "median": 0.0264,
+        "p95": 0.029215,
+        "p99": 0.043111,
+        "min": 0.0256,
+        "max": 0.0594,
+        "stdev": 0.003355
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 6.25,
+        "wall_ms_per_round_mean": 6.152,
+        "rss_start_bytes": 37744640,
+        "rss_end_bytes": 37744640,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 6720,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    },
+    {
+      "name": "authorize_and_gate",
+      "iterations_per_round": 200,
+      "rounds": 5,
+      "total_calls": 1000,
+      "latency_ms": {
+        "mean": 0.07778,
+        "median": 0.0704,
+        "p95": 0.11983,
+        "p99": 0.245201,
+        "min": 0.0672,
+        "max": 0.3484,
+        "stdev": 0.026778
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 15.625,
+        "wall_ms_per_round_mean": 16.452,
+        "rss_start_bytes": 37744640,
+        "rss_end_bytes": 37744640,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 13374,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    },
+    {
+      "name": "gate_unauthorized",
+      "iterations_per_round": 300,
+      "rounds": 5,
+      "total_calls": 1500,
+      "latency_ms": {
+        "mean": 0.00614,
+        "median": 0.0058,
+        "p95": 0.0082,
+        "p99": 0.010002,
+        "min": 0.0055,
+        "max": 0.0348,
+        "stdev": 0.001427
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 3.125,
+        "wall_ms_per_round_mean": 2.519,
+        "rss_start_bytes": 37752832,
+        "rss_end_bytes": 37752832,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 2944,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    },
+    {
+      "name": "version_change_invalidates",
+      "iterations_per_round": 200,
+      "rounds": 5,
+      "total_calls": 1000,
+      "latency_ms": {
+        "mean": 0.073145,
+        "median": 0.0711,
+        "p95": 0.08041,
+        "p99": 0.109205,
+        "min": 0.0691,
+        "max": 0.2136,
+        "stdev": 0.009204
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 15.625,
+        "wall_ms_per_round_mean": 15.42,
+        "rss_start_bytes": 37752832,
+        "rss_end_bytes": 37752832,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 14447,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    },
+    {
+      "name": "validate_native_chat_turn",
+      "iterations_per_round": 500,
+      "rounds": 5,
+      "total_calls": 2500,
+      "latency_ms": {
+        "mean": 0.000976,
+        "median": 0.0009,
+        "p95": 0.0011,
+        "p99": 0.0015,
+        "min": 0.0008,
+        "max": 0.0249,
+        "stdev": 0.000515
+      },
+      "resource": {
+        "cpu_ms_per_round_mean": 0.0,
+        "wall_ms_per_round_mean": 1.531,
+        "rss_start_bytes": 37752832,
+        "rss_end_bytes": 37752832,
+        "rss_growth_bytes": 0,
+        "tracemalloc_peak_bytes": 656,
+        "psutil_available": true
+      },
+      "stability": {
+        "unexpected_exceptions": 0,
+        "distinct_outputs": 1,
+        "deterministic": true,
+        "rss_growth_bytes": 0
+      }
+    }
+  ]
+}

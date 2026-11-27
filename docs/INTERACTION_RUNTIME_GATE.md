@@ -63,3 +63,47 @@ allowed_next_action: none
 - 上下文版本变化使授权失效；
 - 同一事项与上下文版本不重复投递；
 - Native Chat 最低回合内容校验。
+
+## 本次 PR 验证结果（2026-11-27）
+
+**分支：** `fix/interaction-runtime-gate`
+
+### 单元测试
+
+```
+python -m unittest discover -s tests -v
+Ran 178 tests in 34.716s
+OK
+```
+
+新增 `tests/test_interaction_runtime_gate.py` 8/8 通过；覆盖诊断报告 §7 的七项条件与 Native Chat 最低回合校验。
+未连接真实宿主 UI / AUQ，协议层通过不等于端到端交互通过。
+
+### 性能检测
+
+```
+python benchmarks/benchmark_runtime_gate.py --rounds 5
+```
+
+| 关键路径 | 均值 | P95 | 稳定性 |
+|---|---:|---:|---|
+| 宿主能力探测 L0 / L2 | 0.0011 / 0.0014 ms | 0.0012 / 0.0023 ms | 输出确定 |
+| 参数缺失即停机 | 0.0180 ms | 0.0260 ms | 输出确定 |
+| Native Chat 待答 / 结构化投递 | 0.0243 / 0.0332 ms | 0.0255 / 0.0478 ms | 输出确定 |
+| 授权生成 + 执行闸门 | 0.0778 ms | 0.1198 ms | 输出确定 |
+| 版本变化使授权失效 | 0.0731 ms | 0.0804 ms | 输出确定 |
+
+10 个场景共 17,500 次调用：**0 次非预期异常、输出签名全部确定、RSS 无单调增长**。
+完整原始数据、方法与改进建议见 `benchmarks/results.json` 与 `benchmarks/PERFORMANCE_REPORT.md`。
+
+### 与 pfc-headless 的接口一致性
+
+`FormalRunAuthorization.to_headless_args()` 产出的八个参数键与 `pfc-headless` 授权闸门接受的 CLI 参数一一对应；
+正式 Run 缺少这些字段时由 `pfc-headless` 在提交边界拒绝，Pilot 必须显式声明并标记
+`UNACCEPTED_TECHNICAL_PILOT`。
+
+### 仍未验证
+
+- 宿主是否真实渲染卡片并回写答案；
+- Agent 在所有宿主中是否确实执行停机等待；
+- 真实 PFC Run 的跨 Skill 授权链端到端。
