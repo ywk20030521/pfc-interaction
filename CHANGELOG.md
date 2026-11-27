@@ -1,5 +1,66 @@
 # PFC Interaction Skill — 变更日志
 
+## 5.1.0（2026-11-27）— 通用深度科研协作系统，全项收口
+
+**定位：** 5.1 不是针对单一实验的补丁，而是整个 Skill 的通用升级：在 5.0/5.0.1 底座上关闭跨会话恢复、模式自动路由、M1–M6 深度包装、宿主 UI 参考实现与科学层围压闭环。
+
+### 新增能力
+
+- `core/v510_continuity.py`：从科研档案结构化 state 恢复议题树、证据与开放待办。
+- `core/v510_routing.py`：按议题类型/状态/阶段自动推荐 8 种讨论模式。
+- `modules/v510_deep_modules.py`：M1–M6 通用深度包装，门槛与模块输入双检查，输出 candidates/confidence/unresolved。
+- `assets/v510_cards.html`：五类卡片渲染参考，支持折叠依据、窄屏、文字状态与暂缓/返回。
+- `core/v510_physics.py`：围压控制与峰值声明分离的可复用物理闸门。
+- `outputs/v510_acceptance/scripts/pfc_case_runner.py`：可复用三轴配方（force-x/force-y servo、velocity-max 1.0、gain-update 10、20 段采样）。
+
+### 验收
+
+- 全量 **170 条测试通过**（bridge 在线，0 跳过）。
+- 三工况真实 PFC3D：69 个真实 tool_task_id；围压比 0.975–1.000，加载中漂移 ≤10%；C1 捕获峰后；H3 被否决、H2 获范围内支持、H1 仍 UNRESOLVED。
+- `docs/V510_ACCEPTANCE.md`：宣布 5.1.0 在目标范围内通过；材料参数定量标定不在范围。
+
+## 5.0.1（2026-11-27）— 深度科研讨论与科研连续性
+
+**定位：** 按讨论深度强化修订版五份规范升级。核心对象从“问题”提升为“科研议题”；复杂议题必须经历 D0–D3 实质迭代、反方审查、用户修正、方案修订和验证计划。
+
+### 新增能力
+
+- `core/v501_issues.py`：ResearchIssue 类型/状态/优先级/依赖/重开/失效与待讨论队列。
+- `core/v501_deep_discussion.py`：D0–D3 深度等级、8 种讨论模式、实质阶段门槛、用户修正与修订记录。
+- `core/v501_evidence.py`：八类证据、假设登记与科研成熟度；USER_EXPERIENCE 不升格为事实，CONFIRMED ≠ VALIDATED。
+- `core/v501_change.py` / `core/v501_archive.py`：变更影响、议题重开、决策失效与 15 类课题档案生成。
+- `modules/v501_cards.py`：讨论收敛/参数登记/方案确认/执行授权/检查点决策五类卡片，绑定议题并通过深度门槛。
+- 五份 5.0.1 规范与技术报告纳入 `docs/`；新增 PR 台账、实现状态与验收文档。
+
+### 验收
+
+- 新增 14 条 5.0.1 协议测试；全量 161 条通过（bridge 在线，0 跳过）。
+- `examples/v501/complex_case_replay.py` 基于真实三轴案例回放：3 工况/21 个真实 tool_task_id、议题重开、假设 UNRESOLVED；报告标记 `V501_REPLAY_PASS`，科学层未通过。
+- 真实复杂课题验收档案见 `outputs/v501_acceptance/`（13 轮 D3 讨论、科研档案、UNRESOLVED 结论）。
+
+## 5.0.0（2026-11-27）— 科研工作流驱动 + Core 持续讨论
+
+**定位**：在 4.0.0 六模块契约基础上升级到 5.0，新增 `core/v50_*` 与 `modules/v50_*` 实现载体；保留 4.0 接口与 v41 阶段门，既有回归不破坏。
+
+### 新增能力
+
+- 统一科研上下文与状态模型（`core/v50_context.py`）：S1–S6、阶段/模块状态分离、六类证据、参数/决策/交互记录、context 版本与 provenance。
+- 讨论与方案建议（`core/v50_discussion.py`）：先理解分析后追问、备选方案 pros/cons/适用条件/依据、按完成条件推进、阶段总结；新增 `gate_for_card()` 内容维度深度门槛，接入卡片准备后浅讨论不得结构化。
+- 决策与授权（`core/v50_decisions.py`）：PROPOSED→DISCUSSING→CONFIRMED 等状态、高影响操作授权绑定、版本变化失效、Native Chat/AUQ 事项去重与回退。
+- 工作流编排（`core/v50_workflow.py`）：阶段主线推进、按需模块计划、产物审核、回退证据与影响分析。
+- 跨模块参数标定（`modules/v50_calibration.py`）：M2–M6 分工、真实 tool_task_id 门槛、逐版本误差与接受标准、迭代上限、敏感性与非唯一性提示。
+- 卡片交互适配（`modules/v50_interaction.py`）：复用 04 规范卡片校验、单卡单决策/最多三卡、提交回写与 Agent 反馈、执行卡单独授权。
+- 真实执行载体（`modules/v50_execution.py`）：4.0 Envelope→5.0 `module_result` 转换、按需模块总线、Core 授权绑定的 bridge 网关（桥离线/无授权一律 BLOCKED，不伪造 ID）。
+- 四份强制规范与 5.0 技术报告纳入 `docs/`；新增 `V50_PR_BREAKDOWN.md`、`V50_IMPLEMENTATION_STATUS.md`、`V50_ACCEPTANCE.md`。
+
+### 验收
+
+- 新增 36 条 5.0 离线协议测试 + 6 条执行载体验收 + 7 条讨论深度门槛测试；全量 147 条测试通过（bridge 在线，0 跳过）。
+- `examples/v50/full_stage_walkthrough.py` 完成六阶段 + 标定迭代 + 证据回退的离线回放，报告标记 `OFFLINE_REPLAY_PASS`。
+- **bridge 在线补验**：PFC2D 与 PFC3D Console + bridge 0.6.17 均通过；`tests/test_v40_tooling.py` 3 条真实通过；`examples/v50/real_bridge_execution.py` 通过 Core 授权网关取得真实 `tool_task_id`，S4 标定协议链 `REAL_BRIDGE_PASS`（3D 报告 `dimension=3D`）；修复 FISH 块回归用例中的 2D 硬编码，使其自动适配 2D/3D。
+- 三轴压缩交互验证：初版讨论粒度不足，重划为 11 个子阶段并补上 S2c 观测指标决策；用户确认采用峰值强度+峰值应变+E50；报告 `outputs/v50_interaction_validation/triaxial_interaction_report.md`（修订版）。
+- 科学有效性验证（围压维持、胶结保留率、峰后采样）与宿主 UI 视觉仍未关闭。
+
 ## 0.1.0（2026-11-25）— 首个试用版
 
 **定位**：从 V3.1 架构方案落地的可运行 Skill，核心协作闭环经真实 PFC 环境验证。状态为"可试用"，不宣称全部验收通过。

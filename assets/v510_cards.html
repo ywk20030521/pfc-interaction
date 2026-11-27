@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PFC Interaction 5.1 — 结构化卡片参考渲染</title>
+<style>
+:root{--bg:#f7f8fa;--panel:#fff;--text:#1f2328;--muted:#57606a;--line:#d0d7de;--blue:#0969da;--orange:#bf8700;--red:#cf222e;--green:#1a7f37;--radius:8px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;padding:24px}
+.wrap{max-width:760px;margin:0 auto}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:0 0 20px;box-shadow:0 1px 2px rgba(27,31,36,.04)}
+.header{font-size:12px;color:var(--muted);letter-spacing:.04em;margin-bottom:8px}.title{font-size:18px;font-weight:600}.summary{color:var(--muted);margin:4px 0 14px}
+.section{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.label{font-size:12px;color:var(--muted);margin-bottom:4px}
+.opts{display:grid;gap:8px}.opt{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:6px;padding:9px 11px;cursor:pointer}.opt:hover{border-color:var(--blue)}.opt input{margin-top:5px}
+.status{display:inline-block;font-size:12px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}.status.warn{border-color:var(--orange);color:var(--orange)}.status.danger{border-color:var(--red);color:var(--red)}.status.ok{border-color:var(--green);color:var(--green)}
+details{margin-top:10px}summary{cursor:pointer;color:var(--blue)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}button{padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--text);cursor:pointer}button.primary{background:var(--blue);color:#fff;border-color:var(--blue)}button.danger{background:var(--red);color:#fff;border-color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.field{font-size:13px}.field b{display:block;color:var(--muted);font-weight:400}.risk{color:var(--orange)}
+@media (max-width:520px){body{padding:12px}.card{padding:14px}.opts{grid-template-columns:1fr}.actions button{flex:1 1 100%}}
+</style>
+</head>
+<body><div class="wrap">
+<h2>PFC Interaction 5.1 卡片参考渲染</h2>
+<p class="summary">浅色、克制、文字标签表达状态；此文件是宿主渲染参考，不替代宿主面板实现。</p>
+
+<section class="card" data-type="DISCUSSION_CONVERGENCE">
+<div class="header">S1 · 科研议题 A1 · 讨论收敛卡</div><div class="title">围压是否降低峰后脆性？</div>
+<div class="summary">已讨论多轮，现仅确认一个阶段性判断。</div>
+<div class="status">状态：待确认</div>
+<div class="section"><div class="label">已讨论观点</div><div>围压升高通常抑制脆断；用户经验标记为 USER_EXPERIENCE。</div></div>
+<div class="section"><div class="label">尚存分歧</div><div class="risk">伺服失败可能制造围压假象。</div></div>
+<div class="opts">
+<label class="opt"><input type="radio" name="d1"> <span>暂定接受 H1，待独立验证</span></label>
+<label class="opt"><input type="radio" name="d1"> <span>维持 UNRESOLVED，先修伺服</span></label>
+<label class="opt"><input type="radio" name="d1"> <span>其他 / 自定义</span></label>
+</div>
+<details><summary>高级依据（默认折叠）</summary><p>D3 议题已完成反方审查与用户修正；原始证据见 EVIDENCE_INDEX.md。</p></details>
+<div class="actions"><button class="primary">确认阶段判断</button><button>暂缓</button><button>返回讨论</button></div>
+</section>
+
+<section class="card" data-type="PARAMETER_REGISTRATION">
+<div class="header">S4 · 议题 D1 · 参数登记卡</div><div class="title">胶结抗拉强度 pb_ten</div>
+<div class="summary">登记当前值与来源状态，不表示已标定。</div><div class="status warn">状态：待标定</div>
+<div class="section grid">
+<div class="field"><b>符号 / 单位</b>pb_ten / MPa</div><div class="field"><b>当前值</b>1.0</div>
+<div class="field"><b>建议范围</b>1–2 MPa</div><div class="field"><b>来源</b>经验初值（非实测）</div>
+</div>
+<div class="section"><div class="label">耦合提醒</div><div>与围压效应耦合，单工况不可辨识。</div></div>
+<div class="opts"><label class="opt"><input type="radio" name="p1"> <span>采用 1 MPa</span></label><label class="opt"><input type="radio" name="p1"> <span>采用 2 MPa</span></label><label class="opt"><input type="radio" name="p1"> <span>由用户补充来源</span></label></div>
+<div class="actions"><button class="primary">登记参数</button><button>暂缓</button></div>
+</section>
+
+<section class="card" data-type="PLAN_CONFIRMATION">
+<div class="header">S2 · 议题 B1 · 方案确认卡</div><div class="title">确认诊断优先方案</div>
+<div class="summary">先跑三工况诊断，全矩阵待围压可控后启动。</div><div class="status">状态：暂定</div>
+<div class="section"><div class="label">未选替代方案</div><div>直接 3×2 全因子：可识别性不足且成本高。</div></div>
+<div class="section"><div class="label">未决风险</div><div class="risk">侧向伺服尚未通过验证。</div></div>
+<div class="opts"><label class="opt"><input type="radio" name="s1"> <span>确认诊断优先</span></label><label class="opt"><input type="radio" name="s1"> <span>返回讨论</span></label></div>
+<div class="actions"><button class="primary">确认方案</button><button>暂缓</button></div>
+</section>
+
+<section class="card" data-type="EXECUTION_AUTHORIZATION">
+<div class="header">S5 · 议题 E1 · 执行授权卡</div><div class="title">启动三工况正式仿真</div>
+<div class="summary">操作、对象、版本与影响范围必须明确。</div><div class="status danger">状态：需明确授权</div>
+<div class="section grid">
+<div class="field"><b>操作</b>启动正式仿真</div><div class="field"><b>对象</b>model_v2 / C1-C3</div>
+<div class="field"><b>版本</b>m2 / p1 / mx1</div><div class="field"><b>范围</b>不覆盖历史结果</div>
+</div>
+<div class="section"><div class="label">风险</div><div class="risk">批量执行；异常时按检查点停止。</div></div>
+<div class="opts"><label class="opt"><input type="radio" name="e1"> <span>明确授权</span></label><label class="opt"><input type="radio" name="e1"> <span>取消 / 返回检查</span></label></div>
+<div class="actions"><button class="danger">确认执行</button><button>暂缓</button></div>
+</section>
+
+<section class="card" data-type="CHECKPOINT_DECISION">
+<div class="header">S5 · 检查点 · 检查点决策卡</div><div class="title">围压比未达标</div>
+<div class="summary">C1 伺服后围压比 0.014，继续加载会污染结论。</div><div class="status warn">等级：L3 严重</div>
+<div class="section"><div class="label">真实状态证据</div><div>pfc-05af8ebe；目标 1 MPa，实测 0.014 MPa。</div></div>
+<div class="opts"><label class="opt"><input type="radio" name="c1"> <span>停止并保留证据</span></label><label class="opt"><input type="radio" name="c1"> <span>调整伺服后重跑</span></label><label class="opt"><input type="radio" name="c1"> <span>继续（需说明风险）</span></label></div>
+<div class="actions"><button class="primary">提交决策</button><button>暂缓</button></div>
+</section>
+</div></body></html>

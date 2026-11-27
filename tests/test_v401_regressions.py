@@ -113,16 +113,25 @@ class TestR1FishBlockNativeSplitter(unittest.TestCase):
         self.BridgeUnavailable = BridgeUnavailable
 
     def test_fish_block_executes_without_wedging_bridge(self):
+        # Detect the attached engine: the same FISH splitter must work in 2D/3D.
+        probe = self.adapter.execute_code(
+            "import itasca\nitasca.command('model new')\n"
+            "itasca.command('model domain extent -2 2 -2 2 -2 2')\n"
+            "print('DIM3D_OK')\n")
+        probe_out = (probe.output_artifacts[0].get("output", "")
+                     if probe.output_artifacts else "")
+        extent = "-2 2 -2 2 -2 2" if "DIM3D_OK" in probe_out else "-2 2 -2 2"
+        position = "(0,0,0)" if "DIM3D_OK" in probe_out else "(0,0)"
         dat = """model new
 model large-strain on
-model domain extent -2 2 -2 2
+model domain extent %s
 fish define regression_sum
   regression_sum = 6 + 7
 end
-ball create id=1 position=(0,0) radius=0.5
+ball create id=1 position=%s radius=0.5
 ball attribute density 2500
 model cycle 5
-"""
+""" % (extent, position)
         try:
             result = self.adapter.execute_dat_script(dat)
         except self.BridgeUnavailable as exc:

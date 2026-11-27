@@ -1,115 +1,137 @@
 ---
 name: pfc-interaction
-description: 面向 Itasca PFC 仿真的科研协作 Skill。当操作者希望 Agent 围绕 PFC 实验持续汇报状态、解释现象、讨论方案、协商参数、接收决策并执行验证，或需要科研规划、实验设计、数值建模、仿真管理、科学诊断与数据分析的完整协作时使用。一个 Skill 内含六个专业模块，共享一套交互与执行机制；用户无需选择模块。需要 itasca-mcp 与 PFC 引擎可用。
+description: 面向 Itasca PFC2D/PFC3D 数值模拟的深度科研协作 Skill。当研究者需要围绕复杂课题持续多轮讨论、管理科研议题树与假设证据、完成六阶段科研工作流（研究对象与目标、实验设计、建模路线、参数标定、仿真执行与异常干预、结果分析）、管理决策与执行授权，或需要科研规划、实验设计、数值建模、仿真管理、科学诊断与科学分析能力时使用。一个 Skill、一个协作主体，专业模块按需调用；需要 itasca-mcp 与 PFC 引擎可用。
 license: MIT
-version: 4.0.0
+version: 5.1.0
 agent_created: true
 ---
 
-# PFC Interaction Skill
+# PFC Interaction Skill 5.1
 
 ## 定位
 
-让 Agent 能够围绕 PFC 实验与操作者持续协作：把仿真状态、实验进展、异常和结果转化为操作者可理解的信息，接收操作者的专业判断、实验方向和参数决策，再协调 `itasca-mcp` 完成后续仿真操作，形成闭环。
+一个面向 PFC2D/PFC3D 的轻量化科研协作 Skill：围绕研究人员的科学问题，持续主持讨论、组织证据、协调专业能力和执行工具，直到形成有边界、可追溯的科研结论。5.1 在 5.0 科研工作流底座上，把升级目标扩展为完整的深度科研协作：科研议题树、D0–D3 讨论、证据/假设成熟度、跨会话恢复、模式路由、M1–M6 深度包装、五类卡片与可复用科学层闸门。
 
-**两条通道，一个中心**：
+- 用户只面对一个 Skill，不需要选择 M1–M6；阶段是用户可见工作流，模块是后台专业能力，二者不一一绑定。
+- `itasca-mcp` 负责 PFC ↔ Agent（执行、任务、状态、上下文）；本 Skill 负责 Human ↔ Agent（讨论、解释、建议、决策、授权、反馈）；Agent 是两条通道之间唯一的语义理解与协调主体。
+- 不重复实现 Itasca MCP/Bridge、PFC 执行器或 Scientific Visualization Skill 的能力。
+- 设计完成、代码实现、工具可调用、真实 PFC 执行、科学有效性验证是不同状态；不得互相替代。
 
-- `itasca-mcp` 负责 PFC ↔ Agent（执行、任务、状态、上下文）；
-- 本 Skill 负责 Human ↔ Agent（汇报、解释、讨论、决策、确认、反馈）；
-- **Agent 是两条通道之间唯一的语义理解、分析与协调主体**。
+> 本 Skill 必须遵守 PFC Interaction 5.0.1 总技术报告及四份强制规范。对于复杂科研议题，必须执行多轮实质性讨论、方案比较、反方审查、用户反馈吸收、方案修订和验证规划。禁止以固定问题数量或少量问答自动完成研究阶段。必须维护课题级议题、假设、证据、决策和变更档案。Native Chat 承担复杂讨论；AUQ 仅承载已结构化的事项。任何模块、模板和卡片不得绕过上述规则。如某项能力受环境限制，必须明确报告限制和降级行为。
 
-本 Skill 不直接连接或控制 PFC，不重复 itasca-mcp 的工具功能，不把 AUQ 的回答当作已授权的执行指令。
+## 六阶段科研工作流
 
-**架构（4.0 升级，一个 Skill 多个专业模块）**：核心交互与协作能力（Native Chat / AUQ / 任务协调 / 用户审批与授权 / 状态与证据管理）保持为统一底座；六个专业科研模块 M1–M6（科研规划、实验设计、数值建模、仿真管理、科学诊断、科学分析）通过 `core/` 的统一契约调用该底座，Agent 根据科研任务自动编排，用户不感知模块切换。Visualization Skill 为外部复用能力，不在本 Skill 内重建。模块接口契约见 `references/module_contract.md`；实现状态见 `RELEASE.md`（一个 Skill，不拆分为多个）。
+| 阶段 | 核心问题 | 主要阶段产物 |
+|---|---|---|
+| S1 研究对象与科研目标 | 研究什么、为什么、需要回答什么 | research_brief / research_question / research_hypotheses / research_scope |
+| S2 实验类别与实验设计 | 通过什么实验回答，是否需要对照 | experiment_design / experiment_matrix / variable_schema / measurement_plan |
+| S3 技术方案与建模路线 | 如何转化为合理可执行的 PFC 模型 | technical_route / model_design / model_requirements / model_validation_plan |
+| S4 参数确定与标定 | 参数从哪来，如何证明能产生目标响应 | parameter_register / calibration_plan / calibration_matrix / calibration_results / calibrated_parameters |
+| S5 仿真执行与异常干预 | 如何可靠执行并及时控制异常 | simulation_config / simulation_status / checkpoint_manifest / anomaly_records / execution_report |
+| S6 结果分析与科研总结 | 得到什么，是否可信，支持什么结论 | analysis_results / comparison_report / diagnosis_report / analysis_report / research_conclusion |
 
-## 触发条件
+默认主线 S1→S6，但允许 S2→S1、S3→S2、S4→S3、S5→S3/S4、S6→任一前序阶段。每次回退必须记录触发证据、影响范围、受影响决策和需要重做的产物。
 
-- 操作者提出 PFC 建模、加载、参数研究、结果分析等实验任务；
-- 仿真运行到需要解读中间结果或做方向决策的节点；
-- 出现异常、停滞、结果不符合预期，需要与操作者讨论；
-- 操作者在执行期间提出修改、暂停、终止或新要求；
-- 需要向操作者汇报阶段进展或最终成果。
+## Core 五项能力（跨轮次，不是路由器）
 
-## 核心工作流（每次协作循环）
+1. **Context Manager**：维护统一科研上下文、阶段/模块状态、参数版本、证据与 provenance（`core/v50_context.py`）。
+2. **Discussion Manager**：维护讨论主题、用户观点、备选方案、未决问题与阶段总结；先分析再追问（`core/v50_discussion.py`）。
+3. **Reasoning & Proposal**：基于证据提出有依据的方案、替代方案、风险与影响分析（`make_proposal()`）。
+4. **Decision Manager**：讨论→确认→授权→执行→验证严格分离；授权绑定任务/对象/版本/范围；版本变化使旧授权失效（`core/v50_decisions.py`）。
+5. **Workflow Orchestrator**：阶段推进、产物审核、完成条件判断、回退与影响分析（`core/v50_workflow.py`）。
 
-1. **理解目标**：明确研究目标、当前阶段、已知约束与待定项。
-2. **读取证据**：通过 itasca-mcp 查询真实模型与任务状态。工具名与参数以能力探测结果为准（见 `references/itasca_mcp_boundary.md`）。
-3. **分层表达**：把获取的数据组织为「观测事实 / 趋势判断 / 机理解释 / 备选方案 / 待确认事项」，不得把推测写成已验证事实。
-4. **判断是否需要人**：无决策需求则继续监测；有决策需求则进入第 5 步。
-5. **汇报与提问**：通过 Native Chat 或 AUQ 向操作者传递问题，说明背景、证据、建议与风险。
-6. **接收与结构化**：复述用户回答，澄清模糊点，形成明确的参数、动作、约束和执行条件。
-7. **检查与确认**：核对权限、方案版本、当前模型状态；高风险操作（覆盖/删除/重置）必须单独请求确认。
-8. **执行**：通过 itasca-mcp 执行已确定的操作。
-9. **验证与反馈**：再次读取 PFC 状态确认效果，向操作者如实反馈。
-10. **进入下一阶段**：重复循环。
+**禁止：** 固定问题数或固定轮数作为阶段完成条件；把 Agent 建议写成用户决定；把卡片回答当作执行授权；把工具执行成功当作科学结论成立；把脚本生成当作模型验证通过。
 
-## 双通道规则（简版，详版见 `references/interaction_transport_policy.md`）
+## 5.1 科研连续性与深度讨论
 
-- **Native Chat**：连续科研交流、开放式讨论、方案比较、模糊意图澄清、状态汇报与解释。
-- **AUQ**：结构化参数收集、单选/多选、明确决策、异步待办、多问题排队。
-- 同一待决事项只允许一个有效交互实例；Chat 已答不重复投递 AUQ。
-- 复杂科学判断先讨论、后结构化，不得压缩成选择题。
-- AUQ 不可用时回退 Native Chat 并明确说明，不静默丢弃问题。
+5.1 把核心工作对象从「问题」提升为**科研议题（Research Issue）**。复杂议题必须按 D0–D3 深度等级推进；D2/D3 不得首轮定案，必须经过实质阶段：问题界定、候选方案、反方审查、用户反馈、方案修订，核心议题还需验证计划。轮数只是过程指标，只有产生新分析、证据、反例、修订或综合才计入实质迭代。
 
-## 必须遵守的底线
+- `core/v501_issues.py`：议题类型/状态/优先级、依赖、待讨论队列、重开与失效。
+- `core/v501_deep_discussion.py`：D0–D3 门槛、8 种讨论模式、用户修正吸收与修订记录。
+- `core/v501_evidence.py` / `v501_change.py`：八类证据、假设成熟度、变更影响与重开、CONFIRMED ≠ VALIDATED。
+- `core/v501_archive.py`：生成课题级档案（章程、议题树、讨论、假设、决策、证据、实验、模型、仿真、异常、分析、变更）。
+- `modules/v501_cards.py`：讨论收敛/参数登记/方案确认/执行授权/检查点决策五类卡片；卡片必须绑定议题并通过深度门槛。
 
-1. 不虚构 PFC 状态、数值、图表或执行结果；关键数据注明来源、单位和实验阶段。
-2. 不把 Agent 的建议自动视为操作者已批准的决策；不把模糊意图直接转换为高风险操作。
-3. 不把推测/推断标记为 VERIFIED；区分 observed / executed / verified。
-4. 接受实验方案不等于授权所有后续操作；高风险操作单独确认。
-5. 不复制 itasca-mcp 的 execute / status / interrupt / history 工具；不自建 PFC 管理后端、Bridge 或 Web 服务。
-6. 不承诺 Agent 退出后仍能自主分析或主动通知；不把 GUI 能力外推到 Console。
-7. 失败、超时或状态不确定时明确告知，不假报成功。
+## 持续协作循环
+
+接收意图或系统观察 → 读取上下文与历史决策 → 识别真正待解决问题 → 分析事实/假设/证据/冲突 → 形成解释、建议、备选方案与风险 → 开放讨论 → 更新讨论与决策状态 → 判断继续讨论/调用模块/请求确认 → 检查阶段完成条件并推进或回退。
+
+- 用户提出观点时，先复述理解并给出专业分析，再决定是否追问。
+- 每轮讨论尽量包含当前理解、专业分析、证据与假设、备选方案、影响分析、关键分歧、下一步；至少要有专业分析。
+- **进入结构化卡片前必须调用 `DiscussionManager.gate_for_card()`**：至少具备理解、专业分析、证据或假设、备选方案、影响分析；高影响决策要求两个及以上备选。深度按内容维度检查，不按问题数或轮数。`InteractionCoordinator.prepare()` 接入 DiscussionManager 时会自动执行该门槛，深度不足直接拒绝生成卡片。
+- 暂定推进只能在用户明确要求、假设与不确定已记录、后续可验证且不触发未授权高影响操作时使用。
+- 阶段总结保留已确认事项、建议事项、未决问题、假设、风险和下一阶段前置条件；总结不代表讨论永久终止。
+
+## 双通道与卡片
+
+- **Native Chat（默认）**：科学问题、方案比较、参数策略、异常归因、结果解释等开放式讨论。
+- **AUQ（可选）**：已谈清楚的选择、参数/范围收集、异步待办、执行前明确审批；AUQ 不可用时回退 Native Chat 并说明。
+- 同一事项以 `research_task_id + stage_id + decision_topic` 为稳定键；Chat 已答不得重复投递 AUQ；同一事项只能有一个有效交互实例。
+- 结构化卡片只在问题明确且能降低用户负担时使用；复杂科学判断不得压缩成失真的单选题。5.1 五类卡片（讨论收敛/参数登记/方案确认/执行授权/检查点决策）以 `docs/PFCI-CARD-5.0.1.md` 为唯一详细依据；`assets/v510_cards.html` 是宿主渲染参考。
+- 卡片回答只回写交互与决策上下文；Agent 必须解释回答影响。执行确认卡必须列出动作、对象、版本和影响，无默认勾选、无静默延后，且不绕过 Core 直接触发工具。
+
+## 参数标定（S4 跨模块闭环）
+
+M2 定义标定试验、目标指标和工况矩阵；Core 与用户确认目标与接受标准；M3 将参数写入模型并生成版本；M4 用真实工具证据执行并保存输出；M5 判断数据可信度；M6 计算误差、敏感性与比较；Core 主持调整讨论，用户确认下一轮参数；重复至达标或如实记录无法达标。禁止凭曲线「看起来接近」宣称成功、无目标数据自动调参、不记录变更历史、把单一拟合宣称为唯一解、把未验证参数标记为已标定。实现见 `modules/v50_calibration.py`。
+
+## 实现状态（必须如实区分）
+
+| 能力 | 状态 | 证据/说明 |
+|---|---|---|
+| 4.0 六模块契约、v41 阶段门、提问卡片 V2 | 已实现并回归通过 | `tests/` 既有 4.0 用例 |
+| 5.0 上下文/状态/证据/参数/决策模型 | 已实现 | `core/v50_context.py`，36 条新增离线用例 |
+| 持续讨论、方案比较、授权与双通道路由 | 已实现 | `core/v50_discussion.py`、`core/v50_decisions.py`；讨论深度门槛 `gate_for_card()` + 卡片准备前强制校验 |
+| 5.1 议题树、D0–D3 深度讨论、证据/假设、变更档案、五类卡片 | 已实现 | `core/v501_*.py`、`modules/v501_cards.py`；14 条协议测试 + 复杂案例回放 |
+| 5.1 跨会话恢复、模式自动路由、M1–M6 深度包装 | 已实现 | `core/v510_continuity.py`、`v510_routing.py`、`modules/v510_deep_modules.py`；9 条发布测试 |
+| 宿主 UI 渲染 | 参考实现完成 | `assets/v510_cards.html`：五类卡片、折叠依据、窄屏、文字状态；宿主实际渲染仍由平台决定 |
+| 六阶段编排、回退与影响分析 | 已实现 | `core/v50_workflow.py` |
+| 参数标定闭环、卡片交互适配 | 已实现 | `modules/v50_calibration.py`、`modules/v50_interaction.py` |
+| 协议层端到端离线演练 | 通过 | `examples/v50/full_stage_walkthrough.py` |
+| 5.0 执行载体（`module_result` + Core 授权网关） | 已实现、在线通过 | `modules/v50_execution.py`；`examples/v50/real_bridge_execution.py` 取得真实 `tool_task_id` |
+| 真实 PFC 工具证据 | 工具层在线通过 | bridge 0.6.17 / PFC2D Console；`tests/test_v40_tooling.py` 3 条真实通过 |
+| 科学层：围压控制与机制比较 | PASS | `core/v510_physics.py`；3 工况围压比 0.975–1.000、加载中漂移 ≤10%、69 个真实 tool_task_id；报告 `outputs/v510_acceptance/SCIENTIFIC_REPORT.md` |
+| 材料参数定量标定 | 未通过/不在范围 | pb_ten 1/2 MPa 仍为经验初值，不得外推为真实岩石参数 |
+
+详细状态见 `docs/V50_IMPLEMENTATION_STATUS.md`、`docs/V501_IMPLEMENTATION_STATUS.md`；验收记录见 `docs/V50_ACCEPTANCE.md`、`docs/V501_ACCEPTANCE.md`。
 
 ## 参考文档
 
 | 文档 | 内容 |
 |---|---|
-| `references/architecture.md` | 三方两通道一中心、职责边界、版本与能力探测 |
-| `references/interaction_protocol.md` | 七类交互语义与消息结构 |
-| `references/reporting_policy.md` | 事实/推断/建议分层与衡量标准 |
-| `references/decision_workflow.md` | 决策结构化、风险分级、确认与验证 |
-| `references/safety_rules.md` | 禁止行为、高风险操作、不确定性标注 |
-| `references/itasca_mcp_boundary.md` | 工具复用边界、能力探测、PFC 领域常识 |
-| `references/active_collaboration.md` | 主动汇报触发与长任务策略 |
-| `references/interaction_transport_policy.md` | Native Chat / AUQ 路由规则 |
-| `references/auq_integration.md` | AUQ 薄适配与关联元数据 |
-| `references/pfc_experiment_examples.md` | 单轴压缩等典型协作示例 |
-| `references/complex_experiment.md` | 多阶段复杂实验的拆解、长任务状态访问与跨维度注意事项 |
-| `references/module_contract.md` | 六模块统一接口契约；与上述语义规范互相引用，不互相覆盖 |
-| `docs/V40_CARD_SPEC_ACCEPTANCE.md` | 提问卡片规范验收：A/B/C 内部分类、设计标准展示、顺序契约、12 态状态机 |
-| `docs/PFC_Interaction_4.0_技术报告.md` | 规格基线：六模块功能、标准输出、五层验收 |
+| `docs/README_五份文件关系与使用说明.md` | 5.0.1 五份文件关系、冲突裁定与实现声明 |
+| `docs/PFCI-ARCH-5.0.1.md` | PFCI-ARCH-5.0.1 科研议题、阶段与档案规范 |
+| `docs/PFCI-MOD-5.0.1.md` | PFCI-MOD-5.0.1 模块深度模式与跨模块职责 |
+| `docs/PFCI-HUMAN-5.0.1.md` | PFCI-HUMAN-5.0.1 深度讨论、迭代与决策规范 |
+| `docs/PFCI-CARD-5.0.1.md` | PFCI-CARD-5.0.1 五类卡片与议题回写规范 |
+| `docs/PFC_Interaction_5.0.1_技术报告_讨论深度强化修订版.md` | 5.0.1 目标架构、深度讨论与验收标准 |
+| `docs/V501_PR_BREAKDOWN.md` | 5.0.1 升级 PR 台账 |
+| `docs/V501_IMPLEMENTATION_STATUS.md` | 5.0.1 实现状态矩阵 |
+| `docs/V501_ACCEPTANCE.md` | 5.0.1 验收记录（由 5.1 收口） |
+| `docs/V510_PR_BREAKDOWN.md` | 5.1 收口 PR 台账 |
+| `docs/V510_IMPLEMENTATION_STATUS.md` | 5.1 实现状态矩阵 |
+| `docs/V510_ACCEPTANCE.md` | 5.1 全项验收记录 |
+| `assets/v510_cards.html` | 五类卡片宿主渲染参考实现 |
+| `docs/PFCI-ARCH-5.0.md` | 5.0 强制总体架构与工作流规范（历史基线） |
+| `docs/PFCI-MOD-5.0.md` | PFCI-MOD-5.0 强制模块职责、接口与标定协议 |
+| `docs/PFCI-HUMAN-5.0.md` | PFCI-HUMAN-5.0 强制讨论、双通道、决策与授权规范 |
+| `docs/PFCI-CARD-5.0.md` | PFCI-CARD-5.0 强制提问卡片规范 |
+| `docs/README_四规范总索引.md` | 四规范约束关系与冲突裁定 |
+| `docs/PFC_Interaction_5.0_技术报告.md` | 5.0 目标架构、工作流与技术实施规格 |
+| `docs/V50_PR_BREAKDOWN.md` | 升级 PR 拆分与执行台账 |
+| `docs/V50_IMPLEMENTATION_STATUS.md` | 能力实现状态矩阵 |
+| `docs/V50_ACCEPTANCE.md` | 验收范围、证据与未关闭项 |
+| `references/architecture.md`、`interaction_protocol.md`、`reporting_policy.md` | 4.0 运行时语义，继续有效 |
+| `references/decision_workflow.md`、`safety_rules.md`、`itasca_mcp_boundary.md` | 风险、边界与工具复用规则 |
+| `references/module_contract.md` | 六模块 IF0 统一信封契约（4.0 兼容） |
+| `docs/V40_CARD_SPEC_ACCEPTANCE.md` | 提问卡片 V2 既有验收 |
 
-## 模板与示例
+## 结构指引
 
-- `templates/`：状态汇报、参数协商、异常报告等可复用模板；
-- `examples/`：验收报告、阶段脚本与验收用例（仅验收/演示时读取）；`examples/v4/` 为 4.0 六模块流水线示例；
-- `pr0/`：上游能力基线（itasca-mcp / 宿主 / AUQ）与 PoC 脚本，环境准备时读取。
+- 运行时只需本 `SKILL.md` 与 `references/`；按需读取 `docs/` 中的规范。
+- `core/`：4.0 IF0 运行时 + 5.0 五能力 + 5.0.1 议题/深度讨论/证据/变更/档案；`modules/`：4.0 专业模块 + 5.0 标定/交互/执行 + 5.0.1 五类卡片；`adapters/`：真实执行适配器。
+- `tests/`：接口与协议验收；`examples/v50/`、`examples/v501/`：离线演练；`pr0/`：上游能力基线与 PoC。
+- 维护者文档：`RELEASE.md`、`CHANGELOG.md`、`docs/IF0_接口冻结规范.md`。
 
-## 实现载体：阶段门与三轴纵向闭环
+## 版本兼容
 
-> 定位：4.0.0 六模块契约是正式接口；`core/gates.py`、`core/dispatcher.py::V41CoreDispatcher` 与 `modules/v41_*.py` 是其实现载体（阶段门 + 三轴纵向闭环）。4.0 六模块接口继续保留以兼容既有回归。**端到端物理标定仍未完成，科学层不得宣称验收通过。**
-
-- **阶段门**：`V41CoreDispatcher.dispatch()` 校验 `ApprovalLedger` 中已绑定 context_version 的真实批准；前置批准缺失直接返回 BLOCKED，runner 不被调用。批准只能由 `resolve_decision()` 写入，payload 中的 `approved: true` 无效。
-- **M1/M2 多轮协商**（`modules/v41_interview.py`）：M1 三轮（研究对象/目标/围压来源 → 假设/变量/控制/交付 → 确认）；M2 四轮覆盖 13 类三轴字段，每个字段记录 unit/source/confirmed/default/missing_risk；未确认字段不得进入 M3。
-- **M3 阶段化模型**（`modules/v41_modeling.py`）：成样→初始平衡→压实/预压→胶结→再平衡→围压稳定→轴向加载→数据采集，每阶段独立检查；失败即停在该阶段并进入 M5 诊断。
-- **M4 真实运行器**（`modules/v41_runner.py`）：仅通过 Core I5 提交，保存真实 tool_task_id；桥离线或物理准入失败时返回 BLOCKED，不伪造任务；重跑生成新版本，不覆盖旧证据。
-- **M5/M6 自动证据**（`modules/v41_analysis.py`）：自动读取 CSV/summary 计算峰值、峰值应变、E50、残余强度；峰后在末点或缺少 tool_task_id 时质量闸门 FAIL，禁止输出峰值强度结论；不接受 payload 预整理结论。
-- **提问卡片**：`modules/card_templates.py` 定义 A/B/C 内部分类；`modules/card_sequence.py` 规定 28 张卡按 M1→M6 顺序、阶段内 A→B→C；面板展示按设计标准（阶段·决策 header、标题+说明、物理意义选项、独立建议区），类型不出现在用户面板。
-
-状态用语继续分开：`已实现` / `接口层通过` / `协议层实测通过` / `阻塞已确认` / `未通过`。
-
-## 4.0 实现结构（模块开发/维护时读取）
-
-- `core/`：IF0 运行时——统一信封、三层状态机、决策去重、I1–I6 调度、版本化产物；
-- `adapters/itasca_mcp.py`：真实执行适配器（Core I5 → bridge HTTP API），`task_state` 只认工具返回；
-- `modules/`：M1–M6 六个专业模块实现，遵循 `references/module_contract.md`；
-- `tests/`：接口级用例。Agent 运行时**只需**本 SKILL.md 与 references/，不需读取实现代码。
-
-## 维护者文档（非运行时必读）
-
-- `RELEASE.md`：发布版本、兼容矩阵、安装说明、已知限制——升级时先读；
-- `CHANGELOG.md`：版本演进；
-- `docs/IF0_接口冻结规范.md`：接口冻结规范；`docs/PFC_Interaction_4.0_技术报告.md`：规格基线。
-
-运行时只需本 `SKILL.md` 与 `references/`；其余目录用于安装、验收与后续升级。
+5.0 新增 `core/v50_*.py` 与 `modules/v50_*.py`；5.0.1 新增 `core/v501_*.py` 与 `modules/v501_cards.py`；5.1 新增 `core/v510_*.py`（兼容导出/物理闸门）、`modules/v510_deep_modules.py` 与 `assets/v510_cards.html`。均不修改 4.0 接口与 v41 阶段门；既有回归继续通过。4.0 技术报告是六模块规格基线，5.0 四规范与 5.0.1 五份文件是目标约束；冲突裁定以 `docs/README_五份文件关系与使用说明.md` 为准。状态用语统一为：已实现 / 接口层通过 / 协议层通过 / 工具层在线通过 / 科学层机制比较通过 / 定量标定未通过。
