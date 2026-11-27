@@ -1,6 +1,8 @@
 ---
 name: pfc-interaction
-description: 面向 Itasca PFC2D/PFC3D 数值模拟的深度科研协作 Skill。当研究者需要围绕复杂课题持续多轮讨论、管理科研议题树与假设证据、完成六阶段科研工作流（研究对象与目标、实验设计、建模路线、参数标定、仿真执行与异常干预、结果分析）、管理决策与执行授权，或需要科研规划、实验设计、数值建模、仿真管理、科学诊断与科学分析能力时使用。一个 Skill、一个协作主体，专业模块按需调用；需要 itasca-mcp 与 PFC 引擎可用。
+description: Continuous deep research collaboration for PFC2D/PFC3D studies. Owns research issues, multi-round scientific discussion, evidence and hypothesis registers, decisions and authorization. Use for 科研议题树、深度科研讨论、实验设计与参数标定协商、执行授权、结果解释、阶段回退与科研档案；requires itasca-mcp and a licensed PFC engine.
+metadata:
+  short-description: Deep research discussion and decision authority for PFC studies
 license: MIT
 version: 5.1.0
 agent_created: true
@@ -17,7 +19,41 @@ agent_created: true
 - 不重复实现 Itasca MCP/Bridge、PFC 执行器或 Scientific Visualization Skill 的能力。
 - 设计完成、代码实现、工具可调用、真实 PFC 执行、科学有效性验证是不同状态；不得互相替代。
 
-> 本 Skill 必须遵守 PFC Interaction 5.0.1 总技术报告及四份强制规范。对于复杂科研议题，必须执行多轮实质性讨论、方案比较、反方审查、用户反馈吸收、方案修订和验证规划。禁止以固定问题数量或少量问答自动完成研究阶段。必须维护课题级议题、假设、证据、决策和变更档案。Native Chat 承担复杂讨论；AUQ 仅承载已结构化的事项。任何模块、模板和卡片不得绕过上述规则。如某项能力受环境限制，必须明确报告限制和降级行为。
+## Responsibility boundary
+
+This Skill owns the Human–Agent research loop: issue tree, deep discussion,
+evidence and hypothesis registers, decision and authorization state, stage
+orchestration and research archive. It does not own PFC execution, raw data
+capture, standardized data packages, charts, Viewer rendering or publication
+figures.
+
+- `pfc-headless` owns verified Console/Bridge instances, Project/Case/Run
+  lifecycle, raw capture, immutable standardized delivery (`pfc.standardized-experiment@1.0.0`)
+  and analysis feedback ingestion.
+- `pfc-scientific-visualization` owns derived quantities, statistics, chart
+  decisions, Three.js/ECharts Viewer, publication composition and analysis
+  provenance.
+- `itasca-mcp` / `itasca-mcp-bridge` remain the execution layer.
+- This Skill consumes Run IDs, Findings and analysis results from those Skills;
+  it never duplicates or mutates their immutable outputs.
+
+## Non-negotiable truth rules
+
+- Keep `REAL_PFC`, `COMPUTED_RESULT`, `AGENT_INFERENCE`, `USER_EXPERIENCE` and
+  `UNVERIFIED_ASSUMPTION` distinct. Never promote inference or experience to a
+  tool observation.
+- `CONFIRMED` is a decision state, never scientific validation. Use
+  `NOT_VERIFIED` until the relevant evidence has actually been checked.
+- An execution authorization must bind operation, target, Project/Case/Run,
+  model/parameter/matrix versions and scope; context changes invalidate it.
+- A card answer is not a decision; a decision is not execution; execution is
+  not scientific validation.
+- D2/D3 issues must pass substantive discussion stages before being converted
+  into a card or a module result.
+- Mark missing channels `NOT_CAPTURED`, unsupported channels `NOT_SUPPORTED`,
+  invalid checks `INVALID`; never zero-fill or synthesize data to pass a gate.
+
+> 本 Skill 必须遵守 PFC Interaction 5.1 总技术报告及四份强制规范。对于复杂科研议题，必须执行多轮实质性讨论、方案比较、反方审查、用户反馈吸收、方案修订和验证规划。禁止以固定问题数量或少量问答自动完成研究阶段。必须维护课题级议题、假设、证据、决策和变更档案。Native Chat 承担复杂讨论；AUQ 仅承载已结构化的事项。任何模块、模板和卡片不得绕过上述规则。如某项能力受环境限制，必须明确报告限制和降级行为。
 
 ## 六阶段科研工作流
 

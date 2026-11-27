@@ -4,6 +4,22 @@
 
 5.1 将 Skill 从「会按流程协作」升级为「可持续深度科研协作系统」：以科研议题为核心，支持 D0–D3 实质讨论、证据/假设/决策成熟度、跨会话恢复、讨论模式自动路由、M1–M6 深度包装、五类结构化卡片和可复用科学层闸门。用户可见的是 S1–S6 六阶段，而不是六个独立模块。
 
+## Responsibility boundary
+
+This Skill owns the Human–Agent research loop: Research Issues, deep
+discussion, evidence/hypothesis/decision registers, authorization and the
+research archive. `pfc-headless` owns Console/Bridge verification, Project /
+Case / Run lifecycle, raw capture and `pfc.standardized-experiment@1.0.0`
+delivery. `pfc-scientific-visualization` owns derived quantities, statistics,
+Chart Intelligence, Viewer and publication output. `itasca-mcp` /
+`itasca-mcp-bridge` remain the execution layer. This Skill consumes Run IDs and
+Findings from those Skills; it never mutates their immutable outputs.
+
+Shared truth vocabulary: `REAL_PFC`, `COMPUTED_RESULT`, `AGENT_INFERENCE`,
+`USER_EXPERIENCE`, `UNVERIFIED_ASSUMPTION`, `NOT_CAPTURED`, `NOT_SUPPORTED`,
+`INVALID`, `NOT_VERIFIED`. `CONFIRMED` is a decision state, not scientific
+validation.
+
 ## 核心特性
 
 - **六阶段工作流**：S1 研究对象与目标 → S2 实验设计 → S3 建模路线 → S4 参数标定 → S5 仿真执行与异常干预 → S6 结果分析；支持有证据的回退与影响分析。
@@ -13,12 +29,12 @@
 - **五类结构化卡片**：讨论收敛、参数登记、方案确认、执行授权、检查点决策；卡片绑定议题并通过深度门槛，不绕过 Core。
 - **决策与授权**：讨论 → 确认 → 授权 → 执行 → 验证严格分离；授权绑定操作、对象、模型/参数/工况版本与上下文版本，变更即失效。
 - **参数标定闭环**：M2 目标与矩阵、M3 参数版本、M4 真实工具证据、M5 数据可信度、M6 误差与敏感性、用户确认；拒绝伪造执行与未验证标定。
-- **双通道与卡片**：Native Chat 默认，AUQ 可选且有事项级去重；三类提问卡片遵循 PFCI-CARD-5.0，卡片不绕过 Core 触发执行。
+- **双通道与卡片**：Native Chat 默认，AUQ 可选且有事项级去重；5.1 五类卡片遵循 PFCI-CARD-5.0.1，卡片不绕过 Core 触发执行。
 - **向后兼容**：4.0 六模块契约、v41 阶段门与提问卡片 V2 保持可用。
 
 ## 强制规范
 
-四份规范位于 `docs/`，构成 5.0 强制约束：`PFCI-ARCH-5.0.md`、`PFCI-MOD-5.0.md`、`PFCI-HUMAN-5.0.md`、`PFCI-CARD-5.0.md`；总索引见 `docs/README_四规范总索引.md`。目标架构见 `docs/PFC_Interaction_5.0_技术报告.md`。规范描述的目标能力不自动等于已实现能力，状态见 `docs/V50_IMPLEMENTATION_STATUS.md`。
+目标规范位于 `docs/`：`PFCI-ARCH-5.0.1.md`、`PFCI-MOD-5.0.1.md`、`PFCI-HUMAN-5.0.1.md`、`PFCI-CARD-5.0.1.md`，关系与冲突裁定见 `docs/README_五份文件关系与使用说明.md`，总报告见 `docs/PFC_Interaction_5.0.1_技术报告_讨论深度强化修订版.md`。规范描述的目标能力不自动等于已实现能力，5.1 实现状态见 `docs/V510_IMPLEMENTATION_STATUS.md`。
 
 ## 安装
 
